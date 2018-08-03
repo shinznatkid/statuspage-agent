@@ -14,6 +14,7 @@ Here's an example:
 
 __example.py__
     
+    from statuspage_agent import Client
     client = Client('https://statuspage.example.com/v1/incident/deadbeefdeadbeef/', 'My Group Name.My Component')
     try:
         ...  # your logic
@@ -23,6 +24,7 @@ __example.py__
 
 __another_example.py__
 
+    from statuspage_agent import Client
     client = Client('https://statuspage.example.com/v1/incident/deadbeefdeadbeef/')
     try:
         ...  # your logic
