@@ -1,0 +1,7 @@
+*.pyc
+
+/caches
+/node_modules
+*.sqlite3
+configs.py
+/static_root
