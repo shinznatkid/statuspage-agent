@@ -20,7 +20,7 @@ KEYWORDS = 'api'
 
 setup(
     name='statuspage-agent',
-    version='0.1.0',
+    version='0.2.0',
     description='Flexible requests for Internal Status Page API applications',
     long_description=LONG_DESCRIPTION,
     author='ShinZ Natkid',

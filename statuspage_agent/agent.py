@@ -52,7 +52,7 @@ class Client(object):
         STATUS_UNDER_MAINTENANCE,
     )
 
-    def __init__(self, data_source, default_component_name=None, default_heartbeat_duration=None):
+    def __init__(self, data_source, default_component_name=None, default_heartbeat_duration=None, send_async=True, logger=None):
         self.data_source = data_source
         self.default_component_name = default_component_name
 
@@ -60,8 +60,9 @@ class Client(object):
             default_heartbeat_duration = default_heartbeat_duration.strftime('%H:%M:%S')
         self.default_heartbeat_duration = default_heartbeat_duration
 
-        self.logger = logging.getLogger('statuspage')
+        self.logger = logger or logging.getLogger('statuspage')
         self._log_thread = None
+        self.send_async = send_async
 
     def send_heartbeat(self, component_name=None, status='operational', issue_name='', issue_description='', heartbeat_duration=None, action_datetime=None, is_send_notification=True, hostname=None):
 
@@ -104,17 +105,23 @@ class Client(object):
         if action_datetime:
             data['date'] = action_datetime
 
-        self._async_send_log(data)
+        if self.send_async:
+            self._async_send_log(data)
+        else:
+            self._send_log(data)
 
     def _async_send_log(self, data):
 
         def _async_log():
-            response = requests.post(self.data_source, json=data)
-            self.logger.debug('status code = %s', response.status_code)
-            if 400 <= response.status_code < 500:
-                self.logger.warning('Cannot send statuspage: status code %s\n%s', response.status_code, response.text)
-            if 500 <= response.status_code < 600:
-                self.logger.warning('Cannot send statuspage: status code %s\n%s', response.status_code, response.text)
+            self._send_log(data)
 
         self._log_thread = Thread(target=_async_log)
         self._log_thread.start()
+
+    def _send_log(self, data):
+        response = requests.post(self.data_source, json=data)
+        self.logger.debug('status code = %s', response.status_code)
+        if 400 <= response.status_code < 500:
+            self.logger.warning('Cannot send statuspage: status code %s\n%s', response.status_code, response.text)
+        if 500 <= response.status_code < 600:
+            self.logger.warning('Cannot send statuspage: status code %s\n%s', response.status_code, response.text)
