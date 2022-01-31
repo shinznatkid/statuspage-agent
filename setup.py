@@ -20,7 +20,7 @@ KEYWORDS = 'api'
 
 setup(
     name='statuspage-agent',
-    version='0.2.0',
+    version='0.3.0',
     description='Flexible requests for Internal Status Page API applications',
     long_description=LONG_DESCRIPTION,
     author='ShinZ Natkid',
@@ -31,5 +31,5 @@ setup(
     license='GPLv3',
     classifiers=CLASSIFIERS,
     keywords=KEYWORDS,
-    requires = ['requests'],
+    requires=['requests'],
 )

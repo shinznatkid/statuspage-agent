@@ -52,7 +52,7 @@ class Client(object):
         STATUS_UNDER_MAINTENANCE,
     )
 
-    def __init__(self, data_source, default_component_name=None, default_heartbeat_duration=None, send_async=True, logger=None):
+    def __init__(self, data_source, default_component_name=None, default_heartbeat_duration=None, send_async=True, logger=None, allow_insecure=False):
         self.data_source = data_source
         self.default_component_name = default_component_name
 
@@ -63,6 +63,7 @@ class Client(object):
         self.logger = logger or logging.getLogger('statuspage')
         self._log_thread = None
         self.send_async = send_async
+        self.allow_insecure = allow_insecure
 
     def send_heartbeat(self, component_name=None, status='operational', issue_name='', issue_description='', heartbeat_duration=None, action_datetime=None, is_send_notification=True, hostname=None):
 
@@ -119,7 +120,8 @@ class Client(object):
         self._log_thread.start()
 
     def _send_log(self, data):
-        response = requests.post(self.data_source, json=data)
+        is_verify = not self.allow_insecure
+        response = requests.post(self.data_source, json=data, verify=is_verify)
         self.logger.debug('status code = %s', response.status_code)
         if 400 <= response.status_code < 500:
             self.logger.warning('Cannot send statuspage: status code %s\n%s', response.status_code, response.text)

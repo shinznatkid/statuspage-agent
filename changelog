@@ -1,0 +1,13 @@
+31/01/2022
+
+- Include parameter allow_insecure for skip verify SSL
+
+Example:
+
+from statuspage_agent import Client
+client = Client('https://statuspage.example.com/v1/incident/deadbeefdeadbeef/', 'My Group Name.My Component', allow_insecure=True)
+try:
+    ...  # your logic
+    client.send_heartbeat()  # when success
+except Exception:
+    client.send_heartbeat(status=Client.STATUS_WARNING)  # when failed
